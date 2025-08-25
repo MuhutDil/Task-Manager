@@ -38,11 +38,9 @@ class LabelTest(TestCase):
         # create label
         response = self.client.get(create_url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(create_url, label_data)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(create_url, label_data, follow=True)
         self.assertRedirects(response, self.list_url)
+        self.assertContains(response, flash_message, status_code=200)
 
         # check added label
         response = self.client.get(self.list_url)
@@ -60,11 +58,9 @@ class LabelTest(TestCase):
         response = self.client.get(update_url)
         self.assertEqual(response.status_code, 200)
         label_data = {"name": new_name}
-        response = self.client.post(update_url, label_data)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(update_url, label_data, follow=True)
         self.assertRedirects(response, self.list_url)
+        self.assertContains(response, flash_message, status_code=200)
 
         # check updated label
         response = self.client.get(self.list_url)
@@ -79,11 +75,9 @@ class LabelTest(TestCase):
         # delete label
         response = self.client.get(delete_url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(delete_url)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(delete_url, follow=True)
         self.assertRedirects(response, self.list_url)
+        self.assertContains(response, flash_message, status_code=200)
 
         # check deleted label
         response = self.client.get(self.list_url)

@@ -38,12 +38,10 @@ class StatusTest(TestCase):
         # create status
         response = self.client.get(create_url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(create_url, status_data)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(create_url, status_data, follow=True)
         self.assertRedirects(response, self.list_url)
-
+        self.assertContains(response, flash_message, status_code=200)
+        
         # check added status
         response = self.client.get(self.list_url)
         statuses = response.context["statuses"]
@@ -60,11 +58,9 @@ class StatusTest(TestCase):
         # update status
         response = self.client.get(update_url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(update_url, status_data)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(update_url, status_data, follow=True)
         self.assertRedirects(response, self.list_url)
+        self.assertContains(response, flash_message, status_code=200)
 
         # check updated status
         response = self.client.get(self.list_url)
@@ -79,11 +75,9 @@ class StatusTest(TestCase):
         # delete status
         response = self.client.get(delete_url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(delete_url)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(delete_url, follow=True)
         self.assertRedirects(response, self.list_url)
+        self.assertContains(response, flash_message, status_code=200)
 
         # check deleted status
         response = self.client.get(self.list_url)

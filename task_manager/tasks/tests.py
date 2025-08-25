@@ -66,11 +66,9 @@ class TaskTest(TestCase):
         # create task
         response = self.client.get(create_url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(create_url, self.task_data)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(create_url, self.task_data, follow=True)
         self.assertRedirects(response, self.list_url)
+        self.assertContains(response, flash_message, status_code=200)
 
         # check added task
         response = self.client.get(self.list_url)
@@ -101,12 +99,10 @@ class TaskTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.task_data["name"] = new_name
         self.task_data["labels"] = [1]
-        response = self.client.post(update_url, self.task_data)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(update_url, self.task_data, follow=True)
         self.assertRedirects(response, self.list_url)
-
+        self.assertContains(response, flash_message, status_code=200)
+        
         # check updated task
         detail_url = reverse("tasks_detail", kwargs={"pk": self.task.id})
         response = self.client.get(detail_url)
@@ -126,12 +122,10 @@ class TaskTest(TestCase):
         # delete task
         response = self.client.get(delete_url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(delete_url)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(delete_url, follow=True)
         self.assertRedirects(response, self.list_url)
-
+        self.assertContains(response, flash_message, status_code=200)
+        
         # check deleted tasks
         response = self.client.get(self.list_url)
         tasks = response.context["tasks"]

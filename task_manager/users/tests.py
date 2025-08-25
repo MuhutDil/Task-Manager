@@ -39,12 +39,10 @@ class CustomUserTest(TestCase):
         # post user data with redirect on login page
         response = self.client.get(create_url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(create_url, self.user_data)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(create_url, self.user_data, follow=True)
         self.assertRedirects(response, login_url)
-
+        self.assertContains(response, flash_message, status_code=200)
+        
         # check added user
         response = self.client.get(self.list_url)
         users = response.context["users"]
@@ -62,12 +60,10 @@ class CustomUserTest(TestCase):
         self.assertEqual(response.status_code, 200)
         updated_data = self.user_data.copy()
         updated_data["username"] = new_name
-        response = self.client.post(update_url, updated_data)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(update_url, updated_data, follow=True)
         self.assertRedirects(response, self.list_url)
-
+        self.assertContains(response, flash_message, status_code=200)
+        
         # check updated data
         response = self.client.get(self.list_url)
         self.assertContains(response, new_name)
@@ -83,11 +79,9 @@ class CustomUserTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # post delete page
-        response = self.client.post(delete_url)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), flash_message)
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(delete_url, follow=True)
         self.assertRedirects(response, self.list_url)
+        self.assertContains(response, flash_message, status_code=200)   
 
         # check deleted user
         response = self.client.get(self.list_url)
