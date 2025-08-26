@@ -1,10 +1,14 @@
-from django.contrib.messages import get_messages
+import json
+import os
+
 from django.test import TestCase
 from django.urls import reverse
 
 from task_manager.users.models import CustomUser
 
 from .models import Status
+
+entities_file = os.path.join('task_manager', 'fixtures', 'entities_data.json')
 
 
 class StatusTest(TestCase):
@@ -22,6 +26,8 @@ class StatusTest(TestCase):
 
     def setUp(self):
         self.client.force_login(self.user)
+        with open(entities_file) as file:
+            self.setup_data = json.loads(file.read())['statuses']
 
     def test_status_list(self):
         response = self.client.get(self.list_url)
@@ -33,32 +39,32 @@ class StatusTest(TestCase):
     def test_status_create(self):
         create_url = reverse("statuses_create")
         flash_message = 'Status successfully created.'
-        status_data = {"name": "test status 3"}
+        new_status = self.setup_data["new"]
 
         # create status
         response = self.client.get(create_url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(create_url, status_data, follow=True)
+        response = self.client.post(create_url, new_status, follow=True)
         self.assertRedirects(response, self.list_url)
         self.assertContains(response, flash_message, status_code=200)
         
         # check added status
         response = self.client.get(self.list_url)
         statuses = response.context["statuses"]
-        self.assertContains(response, "test status 3")
+        self.assertContains(response, new_status['name'])
         self.assertTrue(len(statuses) == self.initial_count + 1)
 
     def test_status_update(self):
         old_name = self.status.name
-        new_name = "new test status"
-        status_data = {"name": new_name}
+        update_status = self.setup_data["update"]
+        new_name = update_status["name"]
         flash_message = 'Status successfully updated.'
         update_url = reverse("statuses_update", kwargs={"pk": self.status.id})
 
         # update status
         response = self.client.get(update_url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(update_url, status_data, follow=True)
+        response = self.client.post(update_url, update_status, follow=True)
         self.assertRedirects(response, self.list_url)
         self.assertContains(response, flash_message, status_code=200)
 

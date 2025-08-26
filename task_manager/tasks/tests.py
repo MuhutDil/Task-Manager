@@ -1,4 +1,6 @@
-from django.contrib.messages import get_messages
+import json
+import os
+
 from django.test import TestCase
 from django.urls import reverse
 
@@ -7,6 +9,8 @@ from task_manager.statuses.models import Status
 from task_manager.users.models import CustomUser
 
 from .models import Task, TaskLabel
+
+entities_file = os.path.join('task_manager', 'fixtures', 'entities_data.json')
 
 
 class TaskTest(TestCase):
@@ -25,16 +29,11 @@ class TaskTest(TestCase):
         cls.status = Status.objects.get(pk=1)
         cls.label = Label.objects.get(pk=1)
         cls.list_url = reverse("tasks_list")
-        cls.task_data = {
-            "name": "test task 3",
-            "description": "some description",
-            "status": 1,
-            "author": 1,
-            "labels": (1, 2),
-        }
 
     def setUp(self):
         self.client.force_login(self.user)
+        with open(entities_file) as file:
+            self.setup_data = json.loads(file.read())['tasks']
 
     def test_task_list(self):
         response = self.client.get(self.list_url)
@@ -44,7 +43,7 @@ class TaskTest(TestCase):
         self.assertTrue(len(tasks) == self.initial_count)
         
     def test_task_filter(self):
-        filter_data = {"status": 1, "labels": 1}
+        filter_data = self.setup_data["filter_one_task"]
         response = self.client.get(self.list_url, filter_data)
         tasks = response.context["tasks"]
         self.assertEqual(response.status_code, 200)
@@ -53,7 +52,7 @@ class TaskTest(TestCase):
         self.assertFalse(len(tasks) == 2)
     
     def test_task_filter_empty(self):
-        filter_data = {"status": 2, "executor": 1}
+        filter_data = self.setup_data["filter_empty"]
         response = self.client.get(self.list_url, filter_data)
         tasks = response.context["tasks"]
         self.assertTrue(len(tasks) == 0)
@@ -62,11 +61,12 @@ class TaskTest(TestCase):
     def test_task_create(self):
         create_url = reverse("tasks_create")
         flash_message = "Task successfully created."
+        new_task = self.setup_data["new"]
 
         # create task
         response = self.client.get(create_url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(create_url, self.task_data, follow=True)
+        response = self.client.post(create_url, new_task, follow=True)
         self.assertRedirects(response, self.list_url)
         self.assertContains(response, flash_message, status_code=200)
 
@@ -90,16 +90,15 @@ class TaskTest(TestCase):
 
     def test_task_update(self):
         old_name = self.task.name
-        new_name = "new test task"
+        update_status = self.setup_data["update"]
+        new_name = update_status["name"]
         update_url = reverse("tasks_update", kwargs={"pk": self.task.id})
         flash_message = "Task successfully updated."
 
         # update task
         response = self.client.get(update_url)
         self.assertEqual(response.status_code, 200)
-        self.task_data["name"] = new_name
-        self.task_data["labels"] = [1]
-        response = self.client.post(update_url, self.task_data, follow=True)
+        response = self.client.post(update_url, update_status, follow=True)
         self.assertRedirects(response, self.list_url)
         self.assertContains(response, flash_message, status_code=200)
         

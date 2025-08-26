@@ -1,0 +1,48 @@
+{
+    "users": {
+        "new": {
+            "first_name": "name30",
+            "last_name": "name31",
+            "username": "testuser102",
+            "password1": "password100",
+            "password2": "password100"
+        },
+        "update": {
+            "first_name": "name30",
+            "last_name": "name31",
+            "username": "testuser102",
+            "password1": "password100",
+            "password2": "password100"
+        }
+    },
+
+    "labels": {
+        "new": {"name": "test label 3"},
+        "update": {"name": "new name"}
+    },
+
+    "statuses": {
+        "new": {"name": "test status 3"},
+        "update": {"name": "new name"}
+    },
+
+    "tasks": {
+        "new": {
+            "name": "test task 3",
+            "description": "some description",
+            "status": 1,
+            "author": 1,
+            "labels": [1, 2]
+        },
+        "update": {
+            "name": "new name",
+            "description": "update description",
+            "status": 1,
+            "author": 1,
+            "labels": [1]
+        },
+        "filter_one_task": {"status": 1, "labels": 1},
+        "filter_empty": {"status": 2, "executor": 1}
+    }
+
+}
