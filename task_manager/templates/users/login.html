@@ -4,7 +4,8 @@
 {% block content %}
 
 <h1>{% trans "Log in" %}</h1>
-<form method="post">{% csrf_token %}
+<form method="post">
+    {% csrf_token %}
     {{ form|crispy }}
     <input type="submit" class="btn btn-primary" value='{% trans "Log In" %}'>
 </form>

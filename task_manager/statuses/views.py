@@ -31,18 +31,21 @@ class StatusListView(StatusBaseViewMixin, ListView):
 
 class StatusCreateView(StatusBaseViewMixin, CreateView):
     form_class = StatusCreationForm
-    template_name = "statuses/create.html"
+    template_name = "create.html"
+    extra_context = {'title': _('Create status')}
     success_message = _("Status successfully created.")
 
 
 class StatusUpdateView(StatusBaseViewMixin, UpdateView):
     form_class = StatusChangeForm
-    template_name = "statuses/update.html"
+    template_name = "update.html"
+    extra_context = {'title': _('Change status')}
     success_message = _("Status successfully updated.")
 
 
 class StatusDeleteView(StatusBaseViewMixin, DeleteView):
-    template_name = "statuses/delete.html"
+    template_name = "delete.html"
+    extra_context = {'title': _('Delete status')}
     success_message = _("Status successfully deleted.")
     error_message = _("Cannot delete status because it is in use.")
 

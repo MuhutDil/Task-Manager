@@ -35,7 +35,8 @@ class TaskListView(TaskBaseViewMixin, FilterView):
 
 class TaskCreateView(TaskBaseViewMixin, CreateView):
     form_class = TaskCreationForm
-    template_name = "tasks/create.html"
+    template_name = "create.html"
+    extra_context = {'title': _('Create task')}
     success_message = _("Task successfully created.")
 
     def form_valid(self, form):
@@ -49,12 +50,14 @@ class TaskDetailView(TaskBaseViewMixin, DetailView):
 
 class TaskUpdateView(TaskBaseViewMixin, UpdateView):
     form_class = TaskChangeForm
-    template_name = "tasks/update.html"
+    template_name = "update.html"
+    extra_context = {'title': _('Change task')}
     success_message = _("Task successfully updated.")
 
 
 class TaskDeleteView(CustomUserPassesTestMixin, TaskBaseViewMixin, DeleteView):
-    template_name = "tasks/delete.html"
+    template_name = "delete.html"
+    extra_context = {'title': _('Delete task')}
     success_message = _("Task successfully deleted.")
     error_permission_message = _("Task can only be deleted by its author.")
     error_redirect = reverse_lazy("tasks_list")

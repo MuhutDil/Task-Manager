@@ -2,8 +2,8 @@
 {% load i18n %}
 {% block content %}
 
-  <h1>{% trans "Delete label" %}</h1>
-  <p>{% trans "Are you sure you want to delete" %} {{ label.name }}?</p>
+  <h1>{{ title }}</h1>
+  <p>{% trans "Are you sure you want to delete" %} {{ object.name }}?</p>
     <form method="post">
         {% csrf_token %}
         {{ form }}

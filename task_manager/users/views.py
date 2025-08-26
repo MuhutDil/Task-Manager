@@ -73,12 +73,14 @@ class UserListView(ListView):
 
 class UserUpdateView(UserBaseViewMixin, UpdateView):
     form_class = CustomUserUpdateForm
-    template_name = "users/update.html"
+    template_name = "update.html"
+    extra_context = {'title': _('Update user data')}
     success_message = _("User successfully updated.")
 
 
 class UserDeleteView(UserBaseViewMixin, DeleteView):
-    template_name = "users/delete.html"
+    template_name = "delete.html"
+    extra_context = {'title': _('Deleting user')}
     success_message = _("User successfully deleted.")
     error_message = _("Cannot delete user because it is in use.")
 

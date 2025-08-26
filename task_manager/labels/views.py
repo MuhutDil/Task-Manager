@@ -31,18 +31,21 @@ class LabelListView(LabelBaseViewMixin, ListView):
 
 class LabelCreateView(LabelBaseViewMixin, CreateView):
     form_class = LabelCreationForm
-    template_name = "labels/create.html"
+    template_name = "create.html"
+    extra_context = {'title': _('Create label')}
     success_message = _("Label successfully created.")
 
 
 class LabelUpdateView(LabelBaseViewMixin, UpdateView):
     form_class = LabelChangeForm
-    template_name = "labels/update.html"
+    template_name = "update.html"
+    extra_context = {'title': _('Change label')}
     success_message = _("Label successfully updated.")
 
 
 class LabelDeleteView(LabelBaseViewMixin, DeleteView):
-    template_name = "labels/delete.html"
+    template_name = "delete.html"
+    extra_context = {'title': _('Delete label')}
     success_message = _("Label successfully deleted.")
     error_message = _("Cannot delete label because it is in use.")
 
