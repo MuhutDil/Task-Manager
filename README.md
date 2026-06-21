@@ -26,7 +26,7 @@ The service is available in 2 languages (English and Russian)
 - Uv version 0.5 or higher (optional)
 
 ### Download
-    git clone https://github.com/MuhutDil/python-project-52
+    git clone https://github.com/MuhutDil/Task-Manager
 
 ### Configuration
 Rename the `.env_example` file to `.env` and following the example in this file, enter your data.
